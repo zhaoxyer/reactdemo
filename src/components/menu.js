@@ -1,22 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { menu } from '../config/menu'
 class Menu extends React.Component {
   constructor(){
     super();
     this.state = {
-      active: ''
+      active: 0,
+			subactive: ''
     }
   }
   render() {
     const active = this.state.active
     const list = menu.map( (item, index) => {
       if(item.child){
-        return (<div key={index} onClick={this.showSubMenu.bind(this, index)}>{item.name}<ul className={"sub-menu " +(active === index?'active':'')} onClick={this.stopPro.bind(this)}>{item.child.map((item,index) => {
-          return <div key={index}><Link to={item.to}>{item.name}</Link></div>
+        return (<div key={index} onClick={this.showSubMenu.bind(this, index)} className={(active === index?'active':'')}>{item.name}<ul className={"sub-menu " +(active === index?'show':'')} onClick={this.stopPro.bind(this)}>{item.child.map((item,index) => {
+          return <li key={index} onClick={this.onPitch.bind(this, '', item.to)}>{item.name}</li>
         })}</ul></div>)
       }else{
-       return  <div key={index}><Link to={item.to}>{item.name}</Link></div>
+       return  <div key={index} onClick={this.onPitch.bind(this, index, item.to)} className={(active === index?'active':'')}>{item.name}</div>
       } 
     });
     return(
@@ -40,5 +41,11 @@ class Menu extends React.Component {
   stopPro(e){
     e.stopPropagation()
   }
+	
+	onPitch(index,to){
+		if(index!=='')this.showSubMenu(index)
+		if(to)this.props.history.push(to)
+		
+	}
 }
-export default Menu;
+export default withRouter(Menu);
